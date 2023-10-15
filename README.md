@@ -1,14 +1,18 @@
 # Transr
 
-A CLI command that I use to mass update Salesforce translations in metadata
-files.
+A CLI command mass updates a XML tag content from csv input.
+I built it for Salesforce translation xml files mass update needs.
+
+It expects two optional parameters: a csv-file as input and a path to look for xml files.
+
+Run `transr -h` to get details.
 
 # Simple logic
 
-- It locates xml file according to predefined name in the csv (e.g.`Customer__c` keyword to
-  locate `Customer__c-en_US.xml`)
-- It locates the tag content (e.g. `<help>...</help>`) in the xml file
-- It updates the tag content with predefined data in the csv row
+1. It uses `api_name` column value(e.g.`Customer__c`) to locate a matching file (e.g. `Customer__c-en_US.xml`)
+2. It uses the `xml_tag` column value(e.g. `help`) to locate the tag content(e.g. `<help>foo</help>`) `foo` in the xml file
+3. It updates the tag content `foo` with the data in the `content` column in the
+   csv
 
 # Preparation
 
@@ -16,30 +20,19 @@ files.
    [sample file](./file.csv). 
 2. prepare translation files in `xml` folder, check [sample files](./xml/)
    
-# Use sample data to demo
+# Use sample data to try out
 
 Download this repo which includes sample data: the `file.csv` and the `xml` folder.
 Run `transr` in the root path.
 It should update the `help` tag content in the xml file(s) of the xml folder
 
-# Execution logic
-
-1. Run `transr` in the current path. It expects both the `file.csv` and the
-   `./xml` folder in place, otherwise throws error.
-2. It exepects all rows in `file.csv` have exactly 3 columns (api_name,xml_tag,content)
-3. It uses `api_name` to match files in xml folder, and expect exact one file
-   match
-4. It locates the `xml_tag` content, and uses `content` to replace existing
-   content
-
 # How to install
 
-You need to have [Cargo command](https://www.rust-lang.org/tools/install) to install the tool
-Run `cargo install transr` to install it locally.
+If you have [Cargo](https://www.rust-lang.org/tools/install),
+run `cargo install transr` to install it locally.
 
-## To-Do?
+## To-Do
 
 - Add test scenarios
-- Clap support to allow pass parameters
-- Better error scenario handling
-- Generalize the usage
+- Robust error handling rather than stopping
+- Generalize the usage?
