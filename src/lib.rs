@@ -49,8 +49,8 @@ pub fn get_args() -> MyResult<Config> {
 }
 
 pub fn run(config: Config) -> MyResult<()> {
-    let mut reader = validate_and_get_input(&config.in_file)?;
     validate_xml_path(&config.xml_path)?;
+    let mut reader = validate_and_get_input(&config.in_file)?;
 
     for record in reader.records() {
         let (api_name, tag, to_replace) = parse(record?);
