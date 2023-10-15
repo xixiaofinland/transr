@@ -3,6 +3,8 @@
 A CLI command that I use to mass update Salesforce translations in metadata
 files.
 
+# Simple logic
+
 - It locates xml file according to predefined name in the csv (e.g.`Customer__c` keyword to
   locate `Customer__c-en_US.xml`)
 - It locates the tag content (e.g. `<help>...</help>`) in the xml file
