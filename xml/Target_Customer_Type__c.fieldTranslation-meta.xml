@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <help></help>
+    <label></label>
+    <name>Target_Customer_Type__c</name>
+    <picklistValues>
+        <masterLabel>BtoB</masterLabel>
+        <translation>BtoB</translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>BtoC</masterLabel>
+        <translation>BtoC</translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Molempia</masterLabel>
+        <translation>Both</translation>
+    </picklistValues>
+</CustomFieldTranslation>
