@@ -24,13 +24,17 @@ pub fn get_args() -> MyResult<Config> {
         .arg(
             Arg::new("in_file")
                 .value_name("IN_FILE")
+                .short('i')
+                .long("input-file")
                 .help("csv input file")
                 .default_value(CSV_DEFAULT),
         )
         .arg(
             Arg::new("xml_path")
                 .value_name("XML_PATH")
-                .help("The path with xml files to update")
+                .short('p')
+                .long("xml-path")
+                .help("The path including xml files to be updated")
                 .default_value(XML_DEFAULT_PATH),
         )
         .get_matches();
