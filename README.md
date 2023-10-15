@@ -12,7 +12,7 @@ Open [sample file](./file.csv), it does simple logic as below.
 Loop all rows in csv {
    column1(`Target_Customer_Type__c`) -- match -> xml file (`ABCTarget_Customer_Type__cDEF.xml`)
 
-   column2(`help`) -- find --> (`<help>foo</help>`)
+   column2(`help`) -- find --> (`<help>foo</help>`) in the matched xml file
 
    column3(`info_to_update!`) -- update --> (`<help>info_to_update!</help>`) and save
    the xml file
