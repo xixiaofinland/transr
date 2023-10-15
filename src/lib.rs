@@ -1,4 +1,4 @@
-use clap::{Arg, Command};
+use clap::{Arg, ArgAction, Command};
 use csv::{Reader, ReaderBuilder, StringRecord};
 use glob::MatchOptions;
 use std::ops::Range;
@@ -14,6 +14,7 @@ const XML_DEFAULT_PATH: &str = "./xml";
 pub struct Config {
     in_file: String,
     xml_path: String,
+    dry_run: bool,
 }
 
 pub fn get_args() -> MyResult<Config> {
@@ -26,7 +27,7 @@ pub fn get_args() -> MyResult<Config> {
                 .value_name("IN_FILE")
                 .short('i')
                 .long("input-file")
-                .help("csv input file")
+                .help("CSV input file")
                 .default_value(CSV_DEFAULT),
         )
         .arg(
@@ -37,13 +38,22 @@ pub fn get_args() -> MyResult<Config> {
                 .help("The path including xml files to be updated")
                 .default_value(XML_DEFAULT_PATH),
         )
+        .arg(
+            Arg::new("dry_run")
+                .value_name("DRY_RUN")
+                .short('d')
+                .long("dry-run")
+                .action(ArgAction::SetTrue)
+                .help("Print result to Stdout only."),
+        )
         .get_matches();
 
     let config = Config {
         in_file: matches.get_one("in_file").cloned().unwrap(),
         xml_path: matches.get_one("xml_path").cloned().unwrap(),
+        dry_run: matches.get_flag("dry_run"),
     };
-    println!("config: {:?}", config);
+    // println!("{:?}", config);
 
     Ok(config)
 }
@@ -57,16 +67,18 @@ pub fn run(config: Config) -> MyResult<()> {
 
         let file_path = match_exact_one_file(&api_name, &config.xml_path)?.into_os_string();
         let mut file_content = fs::read_to_string(file_path.clone())?;
-
-        println!("Original: {}", &file_content);
+        // println!("Original: {}", &file_content);
 
         let range = get_content_range(&tag, &file_content)?;
-        println!("range: {:?}", range);
+        // println!("range: {:?}", range);
 
         file_content.replace_range(range, to_replace.as_str());
-        println!("After: {}", &file_content);
 
-        fs::write(file_path, &file_content)?;
+        if config.dry_run {
+            println!("{}", &file_content);
+        } else {
+            fs::write(file_path, &file_content)?;
+        }
     }
     Ok(())
 }
@@ -86,11 +98,7 @@ fn validate_and_get_input(in_file: &str) -> MyResult<Reader<File>> {
 
 fn validate_xml_path(path: &str) -> MyResult<()> {
     if let false = Path::new(path).exists() {
-        return Err(format!(
-            "Parameter defined xml file folder doesn't exist: '{}'",
-            path
-        )
-        .into());
+        return Err(format!("xml folder doesn't exist: '{}'", path).into());
     }
     Ok(())
 }
