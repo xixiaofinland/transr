@@ -2,7 +2,7 @@ use clap::{Arg, Command};
 use csv::{Reader, ReaderBuilder, StringRecord};
 use glob::MatchOptions;
 use std::ops::Range;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::{fs, fs::File};
 
 type MyResult<T> = Result<T, Box<dyn std::error::Error>>;
@@ -49,7 +49,8 @@ pub fn get_args() -> MyResult<Config> {
 }
 
 pub fn run(config: Config) -> MyResult<()> {
-    let mut reader = validate_input(&config.in_file)?;
+    let mut reader = validate_and_get_input(&config.in_file)?;
+    validate_xml_path(&config.xml_path)?;
 
     for record in reader.records() {
         let (api_name, tag, to_replace) = parse(record?);
@@ -70,7 +71,7 @@ pub fn run(config: Config) -> MyResult<()> {
     Ok(())
 }
 
-fn validate_input(in_file: &str) -> MyResult<Reader<File>> {
+fn validate_and_get_input(in_file: &str) -> MyResult<Reader<File>> {
     let mut reader = ReaderBuilder::new().from_path(in_file)?;
 
     for record in reader.records() {
@@ -81,6 +82,17 @@ fn validate_input(in_file: &str) -> MyResult<Reader<File>> {
     }
 
     Ok(ReaderBuilder::new().from_path(in_file)?)
+}
+
+fn validate_xml_path(path: &str) -> MyResult<()> {
+    if let false = Path::new(path).exists() {
+        return Err(format!(
+            "Parameter defined xml file folder doesn't exist: '{}'",
+            path
+        )
+        .into());
+    }
+    Ok(())
 }
 
 fn parse(s: StringRecord) -> (String, String, String) {
