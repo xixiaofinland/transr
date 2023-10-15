@@ -10,12 +10,11 @@ Open [sample file](./file.csv), it does simple logic as below.
 
 ```
 Loop all rows in csv {
-   use column1(`Target_Customer_Type__c`) to locate a partial matching xml file (e.g.
-   `ABCTarget_Customer_Type__cDEF.xml`)
+   column1(`Target_Customer_Type__c`) -- match -> xml file (`ABCTarget_Customer_Type__cDEF.xml`)
 
-   use column2(`help`) to find the tag content in the xml (e.g. `<help>foo</help>`)
+   column2(`help`) -- find --> (`<help>foo</help>`)
 
-   update tag content(`foo`) using column3 value(`info_to_update!`), and save
+   column3(`info_to_update!`) -- update --> (`<help>info_to_update!</help>`) and save
    the xml file
 }
 ```
