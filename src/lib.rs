@@ -84,7 +84,10 @@ pub fn run(config: Config) -> MyResult<()> {
 }
 
 fn validate_and_get_input(in_file: &str) -> MyResult<Reader<File>> {
-    let mut reader = ReaderBuilder::new().from_path(in_file)?;
+    let mut reader = match ReaderBuilder::new().from_path(in_file) {
+        Err(_) => return Err(format!("Read file failed: {}", in_file).into()),
+        Ok(v) => v,
+    };
 
     for record in reader.records() {
         let record = record?;
