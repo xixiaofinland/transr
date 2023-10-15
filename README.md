@@ -2,19 +2,23 @@
 
 A Cli mass-updates a XML tag content from csv input.
 
-It expects two optional parameters: 
-- a csv-file, such as [sample file](./file.csv),
-- a folder path to look for xml files, such as [sample folder](./xml/)
-
 Run `transr -h` to get details.
 
-# Simple logic
+# How it works
 
-Open [sample file](./file.csv),
+Open [sample file](./file.csv), it does simple logic as below.
 
-1. It uses `api_name` column value(e.g.`Customer__c`) to find a matching file (e.g. `Customer__c-en_US.xml`)
-2. It uses the `xml_tag` column value(e.g. `help`) to locate a matching tag content(e.g. `<help>foo</help>`) in the xml file
-3. It updates the tag content `foo` with the data from the `content` column of the csv
+```
+Loop all rows in csv {
+   use column1(`Target_Customer_Type__c`) to locate a partial matching xml file (e.g.
+   `ABCTarget_Customer_Type__cDEF.xml`)
+
+   use column2(`help`) to find the tag content in the xml (e.g. `<help>foo</help>`)
+
+   update tag content(`foo`) using column3 value(`info_to_update!`), and save
+   the xml file
+}
+```
 
 # Preparation
 
