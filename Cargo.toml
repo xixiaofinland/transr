@@ -2,6 +2,8 @@
 name = "transr"
 version = "0.1.0"
 edition = "2021"
+description = "A Cli to update xml content from csv"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 clap = "4"
