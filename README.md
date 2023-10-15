@@ -10,9 +10,6 @@ files.
 - It locates the tag content (e.g. `<help>...</help>`) in the xml file
 - It updates the tag content with predefined data in the csv row
 
-Note. `trans` reads the XML content into a String, so don't use it for a very large XML
-content.
-
 # Preparation
 
 1. prepare `file.csv` with matched columns (api_name,xml_tag,content), check
