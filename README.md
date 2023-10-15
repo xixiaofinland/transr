@@ -1,11 +1,10 @@
 # Transr
 
 A Cli mass-updates a XML tag content from csv input.
-I built it for Salesforce translation xml files update.
 
 It expects two optional parameters: 
-- a csv-file
-- a path to look for xml files
+- a csv-file, such as [sample file](./file.csv),
+- a folder path to look for xml files, such as [sample folder](./xml/)
 
 Run `transr -h` to get details.
 
@@ -21,7 +20,7 @@ Open [sample file](./file.csv),
 
 1. prepare `file.csv` with matched columns (api_name,xml_tag,content), check
    [sample file](./file.csv). 
-2. prepare translation files in `xml` folder, check [sample files](./xml/)
+2. prepare translation files in `xml` folder, check [sample folder](./xml/)
    
 # Use sample data to try out
 
