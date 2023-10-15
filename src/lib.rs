@@ -16,22 +16,24 @@ pub fn run() -> MyResult<()> {
     for record in reader.records() {
         let csv_row = record?;
 
-        // should safely unwrap as it was validated above;
-        let api_name = csv_row.get(0).expect("api name not readable.");
-        let tag = csv_row.get(1).expect("tag name not readable.");
-        let data = csv_row.get(2).expect("3rd column not readable.");
-        let content_to_replace = replace_special_chars(data);
+        let (api_name, tag, to_replace) = (
+            csv_row.get(0).expect("1st column not readable."),
+            csv_row.get(1).expect("2nd column not readable."),
+            replace_special_chars(csv_row.get(2).expect("3rd column not readable.")),
+        );
 
-        let file_path = match_exact_one_file(api_name)?;
-        let mut file_content = fs::read_to_string(file_path.into_os_string())?;
+        let file_path = match_exact_one_file(api_name)?.into_os_string();
+        let mut file_content = fs::read_to_string(file_path.clone())?;
 
         println!("Original: {}", &file_content);
 
         let range = get_content_range(tag, &file_content)?;
         println!("range: {:?}", range);
 
-        file_content.replace_range(range, content_to_replace.as_str());
+        file_content.replace_range(range, to_replace.as_str());
         println!("After: {}", &file_content);
+
+        fs::write(file_path, &file_content)?;
     }
     Ok(())
 }
