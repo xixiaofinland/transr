@@ -1,0 +1,14 @@
+[package]
+name = "transr"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = "4"
+walkdir = "2"
+csv = "1.3.0"
+glob = "0.3.1"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "2"
