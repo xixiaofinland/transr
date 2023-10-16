@@ -23,17 +23,17 @@ pub fn get_args() -> MyResult<Config> {
         .author("Xi Xiao <tdxiaoxi2@gmail.com>")
         .about("Update xml content from csv")
         .arg(
-            Arg::new("in_file")
-                .value_name("IN_FILE")
-                .short('i')
-                .long("input-file")
+            Arg::new("csv")
+                .value_name("CSV")
+                .short('c')
+                .long("csv-input")
                 .help("CSV input file")
                 .default_value(CSV_DEFAULT),
         )
         .arg(
             Arg::new("xml_path")
                 .value_name("XML_PATH")
-                .short('p')
+                .short('x')
                 .long("xml-path")
                 .help("The path including xml files to be updated")
                 .default_value(XML_DEFAULT_PATH),
@@ -44,12 +44,12 @@ pub fn get_args() -> MyResult<Config> {
                 .short('d')
                 .long("dry-run")
                 .action(ArgAction::SetTrue)
-                .help("Print result to Stdout only."),
+                .help("Print result to Stdout only. Great for trying out without touching xml content"),
         )
         .get_matches();
 
     let config = Config {
-        in_file: matches.get_one("in_file").cloned().unwrap(),
+        in_file: matches.get_one("csv").cloned().unwrap(),
         xml_path: matches.get_one("xml_path").cloned().unwrap(),
         dry_run: matches.get_flag("dry_run"),
     };
@@ -66,7 +66,7 @@ pub fn run(config: Config) -> MyResult<()> {
         let (api_name, tag, to_replace) = parse(record?);
 
         let file_path = match_exact_one_file(&api_name, &config.xml_path)?.into_os_string();
-        let mut file_content = fs::read_to_string(file_path.clone())?;
+        let mut file_content = fs::read_to_string(&file_path)?;
         // println!("Original: {}", &file_content);
 
         let range = get_content_range(&tag, &file_content)?;
@@ -142,12 +142,12 @@ fn match_exact_one_file(name: &str, xml_path: &str) -> MyResult<PathBuf> {
 fn get_content_range(tag: &str, content: &str) -> MyResult<Range<usize>> {
     let start = match content.find(format!("<{}>", tag).as_str()) {
         Some(v) => v + tag.len() + 2,
-        None => return Err("tag start not found.".into()),
+        None => return Err(format!("tag start not found.\n file:\n{}", content).into()),
     };
 
     let end = match content.find(format!("</{}>", tag).as_str()) {
         Some(v) => v,
-        None => return Err("tag end not found.".into()),
+        None => return Err(format!("tag end not found.\n file:\n{}", content).into()),
     };
 
     let range = start..end;

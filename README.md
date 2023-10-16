@@ -19,18 +19,14 @@ Loop all rows in csv {
 }
 ```
 
-# Preparation
+# How to use it
 
 1. prepare `file.csv` with matched columns (api_name,xml_tag,content), check
-   [sample file](./file.csv). 
+   [sample file](./file.csv)
 2. prepare translation files in `xml` folder, check [sample folder](./xml/)
+3. use `-d` to dry run until all file updates are as expected
+4. run it without `-d` to write into xml files
    
-# Use sample data to try out
-
-Download this repo which includes sample data: the `file.csv` and the `xml` folder.
-Run `transr` in the root path.
-It should update the `help` tag content in the xml file(s) of the xml folder
-
 # How to install
 
 If you have [Cargo](https://www.rust-lang.org/tools/install),
@@ -39,5 +35,4 @@ run `cargo install transr` to install it locally.
 ## To-Do
 
 - Add test scenarios
-- Robust error handling rather than stopping
 - Generalize the usage?
