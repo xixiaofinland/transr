@@ -7,6 +7,7 @@ use std::{fs, fs::File};
 
 type MyResult<T> = Result<T, Box<dyn std::error::Error>>;
 
+const VERSION: &str = "0.1.1";
 const CSV_DEFAULT: &str = "file.csv";
 const XML_DEFAULT_PATH: &str = "./xml";
 
@@ -19,7 +20,7 @@ pub struct Config {
 
 pub fn get_args() -> MyResult<Config> {
     let matches = Command::new("transr")
-        .version("0.1.0")
+        .version(VERSION)
         .author("Xi Xiao <tdxiaoxi2@gmail.com>")
         .about("Update xml content from csv")
         .arg(

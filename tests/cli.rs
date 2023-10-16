@@ -18,7 +18,7 @@ fn zero() -> TestResult {
 // --------------------------------------------------
 #[test]
 fn one() -> TestResult {
-    let args = ["-i tests/1/input.csv", "-d"];
+    let args = ["-c tests/1/input.csv", "-x tests/1/xml", "-d"];
     let expected = "tests/1/r.xml";
     run(&args, &expected)
 }
