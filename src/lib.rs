@@ -142,12 +142,12 @@ fn match_exact_one_file(name: &str, xml_path: &str) -> MyResult<PathBuf> {
 fn get_content_range(tag: &str, content: &str) -> MyResult<Range<usize>> {
     let start = match content.find(format!("<{}>", tag).as_str()) {
         Some(v) => v + tag.len() + 2,
-        None => return Err(format!("tag start not found.\n file:\n{}", content).into()),
+        None => return Err(format!("<{}> tag not found.\nFile:\n{}", tag, content).into()),
     };
 
     let end = match content.find(format!("</{}>", tag).as_str()) {
         Some(v) => v,
-        None => return Err(format!("tag end not found.\n file:\n{}", content).into()),
+        None => return Err(format!("</{}> tag not found.\nFile:\n{}", tag, content).into()),
     };
 
     let range = start..end;
