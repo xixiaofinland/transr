@@ -59,21 +59,32 @@ pub fn get_args() -> MyResult<Config> {
     Ok(config)
 }
 
+struct FileInfo<'a> {
+    name: &'a str,
+    content: &'a str,
+}
+
 pub fn run(config: Config) -> MyResult<()> {
     validate_xml_path(&config.xml_path)?;
     let mut reader = validate_and_get_input(&config.in_file)?;
 
     for record in reader.records() {
-        let (api_name, tag, to_replace) = parse(record?);
+        let record = record?;
+        let (api_name, tag, to_replace) = parse(&record);
 
         let file_path = match_exact_one_file(&api_name, &config.xml_path)?.into_os_string();
+        let file_name = file_path.to_str().unwrap_or("unreadble file path");
         let mut file_content = fs::read_to_string(&file_path)?;
-        // println!("Original: {}", &file_content);
 
-        let range = get_content_range(&tag, &file_content)?;
+        let file_info = FileInfo {
+            name: file_name,
+            content: &file_content,
+        };
+
+        let range = get_range_to_replace(&tag, file_info)?;
         // println!("range: {:?}", range);
 
-        file_content.replace_range(range, to_replace.as_str());
+        file_content.replace_range(range, &to_replace);
 
         if config.dry_run {
             println!("{}", &file_content);
@@ -107,7 +118,7 @@ fn validate_xml_path(path: &str) -> MyResult<()> {
     Ok(())
 }
 
-fn parse(s: StringRecord) -> (String, String, String) {
+fn parse(s: &StringRecord) -> (String, String, String) {
     (
         s.get(0).expect("1st column not readable.").to_string(),
         s.get(1).expect("2nd column not readable.").to_string(),
@@ -140,15 +151,15 @@ fn match_exact_one_file(name: &str, xml_path: &str) -> MyResult<PathBuf> {
     }
 }
 
-fn get_content_range(tag: &str, content: &str) -> MyResult<Range<usize>> {
-    let start = match content.find(format!("<{}>", tag).as_str()) {
+fn get_range_to_replace(tag: &str, f: FileInfo) -> MyResult<Range<usize>> {
+    let start = match f.content.find(format!("<{}>", tag).as_str()) {
         Some(v) => v + tag.len() + 2,
-        None => return Err(format!("<{}> tag not found.\nFile:\n{}", tag, content).into()),
+        None => return Err(format!("<{}> tag not found in: {}", tag, f.name).into()),
     };
 
-    let end = match content.find(format!("</{}>", tag).as_str()) {
+    let end = match f.content.find(format!("</{}>", tag).as_str()) {
         Some(v) => v,
-        None => return Err(format!("</{}> tag not found.\nFile:\n{}", tag, content).into()),
+        None => return Err(format!("</{}> tag not found in: {}", tag, f.name).into()),
     };
 
     let range = start..end;
