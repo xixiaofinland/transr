@@ -137,7 +137,7 @@ fn match_exact_one_file(name: &str, xml_path: &str) -> MyResult<PathBuf> {
         require_literal_leading_dot: false,
     };
 
-    let glob_value = format!("{}/*{}*.xml", xml_path, name);
+    let glob_value = format!("{}/{}*.xml", xml_path, name);
     let mut file_matches: Vec<_> = glob::glob_with(&glob_value, options)?.collect();
 
     if file_matches.len() != 1 {
