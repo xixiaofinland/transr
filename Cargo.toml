@@ -1,9 +1,10 @@
 [package]
 name = "transr"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
-description = "A Cli to update xml content from csv"
+description = "A Cli to update xml tag content from csv content"
 license = "MIT OR Apache-2.0"
+authors = [ "Xi Xiao <tdxiaoxi2@gmail.com>" ]
 
 [dependencies]
 clap = "4"

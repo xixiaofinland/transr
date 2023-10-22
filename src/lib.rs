@@ -80,22 +80,21 @@ impl<'a> FileInfo<'a> {
             None => return Err(format!("</{}> tag not found in: {}", tag, self.name).into()),
         };
 
-        let range = start..end;
-        Ok(range)
+        Ok(start..end)
     }
 }
 
 pub fn run(config: Config) -> MyResult<()> {
-    validate_xml_path(&config.xml_path)?;
-    let mut reader = validate_and_get_input(&config.in_file)?;
+    is_valid_path(&config.xml_path)?;
+    let mut reader = get_csv_input(&config.in_file)?;
 
     for record in reader.records() {
         let record = record?;
-        let (api_name, tag, to_replace) = parse(&record);
+        let (api_name, tag, to_replace) = parse_row(&record);
 
         let file_path = match_exact_one_file(&api_name, &config.xml_path)?.into_os_string();
-        let file_name = file_path.to_str().unwrap_or("unreadble file path");
         let mut file_content = fs::read_to_string(&file_path)?;
+        let file_name = file_path.to_str().unwrap_or("unreadble file path");
 
         let file_info = FileInfo::new(file_name, &file_content);
 
@@ -112,7 +111,7 @@ pub fn run(config: Config) -> MyResult<()> {
     Ok(())
 }
 
-fn validate_and_get_input(in_file: &str) -> MyResult<Reader<File>> {
+fn get_csv_input(in_file: &str) -> MyResult<Reader<File>> {
     let mut reader = match ReaderBuilder::new().from_path(in_file) {
         Err(_) => return Err(format!("Read file failed: {}", in_file).into()),
         Ok(v) => v,
@@ -128,14 +127,14 @@ fn validate_and_get_input(in_file: &str) -> MyResult<Reader<File>> {
     Ok(ReaderBuilder::new().from_path(in_file)?)
 }
 
-fn validate_xml_path(path: &str) -> MyResult<()> {
+fn is_valid_path(path: &str) -> MyResult<()> {
     if let false = Path::new(path).exists() {
         return Err(format!("xml folder doesn't exist: '{}'", path).into());
     }
     Ok(())
 }
 
-fn parse(s: &StringRecord) -> (String, String, String) {
+fn parse_row(s: &StringRecord) -> (String, String, String) {
     (
         s.get(0).expect("1st column not readable.").to_string(),
         s.get(1).expect("2nd column not readable.").to_string(),
