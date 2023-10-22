@@ -64,6 +64,27 @@ struct FileInfo<'a> {
     content: &'a str,
 }
 
+impl<'a> FileInfo<'a> {
+    fn new(name: &'a str, content: &'a str) -> Self {
+        FileInfo { name, content }
+    }
+
+    fn get_tag_content_range(&self, tag: &str) -> MyResult<Range<usize>> {
+        let start = match self.content.find(format!("<{}>", tag).as_str()) {
+            Some(v) => v + tag.len() + 2,
+            None => return Err(format!("<{}> tag not found in: {}", tag, self.name).into()),
+        };
+
+        let end = match self.content.find(format!("</{}>", tag).as_str()) {
+            Some(v) => v,
+            None => return Err(format!("</{}> tag not found in: {}", tag, self.name).into()),
+        };
+
+        let range = start..end;
+        Ok(range)
+    }
+}
+
 pub fn run(config: Config) -> MyResult<()> {
     validate_xml_path(&config.xml_path)?;
     let mut reader = validate_and_get_input(&config.in_file)?;
@@ -76,13 +97,9 @@ pub fn run(config: Config) -> MyResult<()> {
         let file_name = file_path.to_str().unwrap_or("unreadble file path");
         let mut file_content = fs::read_to_string(&file_path)?;
 
-        let file_info = FileInfo {
-            name: file_name,
-            content: &file_content,
-        };
+        let file_info = FileInfo::new(file_name, &file_content);
 
-        let range = get_range_to_replace(&tag, file_info)?;
-        // println!("range: {:?}", range);
+        let range = file_info.get_tag_content_range(&tag)?;
 
         file_content.replace_range(range, &to_replace);
 
@@ -149,19 +166,4 @@ fn match_exact_one_file(name: &str, xml_path: &str) -> MyResult<PathBuf> {
     } else {
         Ok(file_matches.remove(0)?)
     }
-}
-
-fn get_range_to_replace(tag: &str, f: FileInfo) -> MyResult<Range<usize>> {
-    let start = match f.content.find(format!("<{}>", tag).as_str()) {
-        Some(v) => v + tag.len() + 2,
-        None => return Err(format!("<{}> tag not found in: {}", tag, f.name).into()),
-    };
-
-    let end = match f.content.find(format!("</{}>", tag).as_str()) {
-        Some(v) => v,
-        None => return Err(format!("</{}> tag not found in: {}", tag, f.name).into()),
-    };
-
-    let range = start..end;
-    Ok(range)
 }
