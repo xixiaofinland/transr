@@ -1,6 +1,6 @@
 [package]
 name = "transr"
-version = "0.2.4"
+version = "0.2.5"
 edition = "2021"
 description = "A Cli to update xml tag content from csv content"
 license = "MIT OR Apache-2.0"

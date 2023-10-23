@@ -7,7 +7,7 @@ use std::{fs, fs::File};
 
 type MyResult<T> = Result<T, Box<dyn std::error::Error>>;
 
-const VERSION: &str = "0.1.1";
+const VERSION: &str = "0.2.5";
 const CSV_DEFAULT: &str = "file.csv";
 const XML_DEFAULT_PATH: &str = "./xml";
 
