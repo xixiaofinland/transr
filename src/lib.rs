@@ -143,7 +143,7 @@ fn parse_row(s: &StringRecord) -> (String, String, String) {
 }
 
 fn replace_special_chars(content: &str) -> String {
-    content.replace("<", "&lt").replace("&", "&amp")
+    content.replace("<", "&lt;").replace("&", "&amp;")
 }
 
 fn match_exact_one_file(name: &str, xml_path: &str) -> MyResult<PathBuf> {
